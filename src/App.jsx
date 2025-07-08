@@ -1,42 +1,48 @@
+"use client";
+
 import { Canvas } from "@react-three/fiber";
 import "./App.css";
 import { OrbitControls, Environment, Center } from "@react-three/drei";
 import Model from "./components/Model";
-import { Leva } from "leva";
+import ControlPanel from "./components/ControlPanel";
+import Lighting from "./components/Lighting";
+import { useState } from "react";
+
 function App() {
+  const [materials, setMaterials] = useState({});
+  const [floorTexture, setFloorTexture] = useState("oak");
+  const [lampSettings, setLampSettings] = useState({
+    on: true,
+    intensity: 1,
+    color: "#FFE4B5",
+  });
+
   return (
     <div className="App">
-      <Leva
-        hideTitleBar
-        flat
-        collapsed={false}
-        theme={{
-          colors: {
-            elevation1: "#FFFFFF",
-            elevation2: "#F5F5F5",
-            elevation3: "#EEEEEE",
-            accent1: "#6200EE",
-            accent2: "#03DAC6",
-            accent3: "#018786",
-            highlight1: "#BB86FC",
-            highlight2: "#CF6679",
-            highlight3: "#FF0266",
-            vivid1: "#FF9800",
-            folderWidgetColor: "#1F1F1F",
-            folderTextColor: "#000000",
-            toolTipBackground: "#323232",
-            toolTipText: "#FFFFFF",
-          },
-        }}
+      <ControlPanel
+        materials={materials}
+        floorTexture={floorTexture}
+        onFloorTextureChange={setFloorTexture}
+        lampSettings={lampSettings}
+        onLampSettingsChange={setLampSettings}
       />
       <Canvas
-        gl={{ antialias: false, preserveDrawingBuffer: true }}
+        gl={{ antialias: true, preserveDrawingBuffer: true }}
         shadows
         camera={{ position: [3, 3, 6], fov: 55, rotation: [0, Math.pi / 2, 0] }}
       >
         <Environment preset="night" background blur={1} />
+        <Lighting
+          lampOn={lampSettings.on}
+          lampIntensity={lampSettings.intensity}
+          lampColor={lampSettings.color}
+        />
         <Center top>
-          <Model position={[0, 0, 0]} />
+          <Model
+            position={[0, 0, 0]}
+            onMaterialsReady={setMaterials}
+            floorTexture={floorTexture}
+          />
         </Center>
         <OrbitControls
           makeDefault
