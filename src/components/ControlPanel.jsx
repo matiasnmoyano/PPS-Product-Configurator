@@ -16,20 +16,20 @@ const ControlPanel = ({
   lampSettings,
   onLampSettingsChange,
 }) => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("materials");
 
   const materialNames = {
-    Drywall: "Tablaroca",
-    White_Finish_Shiny: "Acabado Blanco Brillante",
-    Purple_Finish_Shiny: "Acabado Púrpura Brillante",
+    Drywall: "Pared",
+    White_Finish_Shiny: "Rack",
+    Purple_Finish_Shiny: "Puertas Rack",
     Couch: "Sillón",
-    material: "Material Genérico",
-    Wood_Dark: "Madera Oscura",
+    material: "Alfombra",
+    Wood_Dark: "Mesita",
     Moulding: "Moldura",
     Curtains: "Cortinas",
-    material_21: "Material 21",
-    Chrome: "Cromo",
+    material_21: "Macetas",
+    Chrome: "Cromado lámpara",
     Lamp: "Lámpara",
   };
 
@@ -74,11 +74,15 @@ const ControlPanel = ({
     <>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`fixed top-4 z-50 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-lg p-2 shadow-lg transition-all duration-300 hover:bg-white ${
+        className={`fixed top-4 z-50 bg-white/90 ml-[20px] backdrop-blur-sm border border-gray-200 rounded-lg p-2 shadow-lg transition-all duration-300 hover:bg-white ${
           isOpen ? "left-80" : "left-4"
         }`}
       >
-        {isOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
+        {isOpen ? (
+          <ChevronLeft color="black" size={20} />
+        ) : (
+          <ChevronRight color="black" size={20} />
+        )}
       </button>
 
       <div
@@ -128,7 +132,7 @@ const ControlPanel = ({
           </button>
         </div>
 
-        <div className="p-4 h-full overflow-y-auto pb-20">
+        <div className="p-4 h-[90%] overflow-y-auto pb-20">
           {activeTab === "floor" && (
             <div className="space-y-3">
               <h3 className="text-sm font-medium text-gray-700 mb-4">
@@ -163,34 +167,33 @@ const ControlPanel = ({
               <h3 className="text-sm font-medium text-gray-700 mb-4">
                 Colores de Materiales
               </h3>
-              {Object.entries(materialNames).map(([materialId, label]) => (
-                <div key={materialId} className="space-y-2">
-                  <label className="text-sm font-medium text-gray-600">
-                    {label}
-                  </label>
-                  <div className="flex items-center gap-3">
-                    <input
-                      type="color"
-                      className="w-12 h-8 rounded border border-gray-300 cursor-pointer"
-                      onChange={(e) =>
-                        handleColorChange(materialId, e.target.value)
-                      }
-                      defaultValue={
-                        materials[materialId]
-                          ? `#${materials[materialId].color.getHexString()}`
-                          : "#ffffff"
-                      }
-                    />
-                    <div className="flex-1 h-8 rounded border border-gray-200 bg-gray-50 flex items-center px-3">
-                      <span className="text-xs text-gray-500">
-                        {materials[materialId]
-                          ? `#${materials[materialId].color.getHexString()}`
-                          : "#ffffff"}
-                      </span>
+              {Object.entries(materialNames).map(([materialId, label]) => {
+                const colorHex =
+                  materials[materialId]?.color?.getHexString?.() || "ffffff";
+
+                return (
+                  <div key={materialId} className="space-y-2">
+                    <label className="text-sm font-medium text-gray-600">
+                      {label}
+                    </label>
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="color"
+                        className="w-12 h-8 rounded border border-gray-300 cursor-pointer"
+                        onChange={(e) =>
+                          handleColorChange(materialId, e.target.value)
+                        }
+                        value={`#${colorHex}`}
+                      />
+                      <div className="flex-1 h-8 rounded border border-gray-200 bg-gray-50 flex items-center px-3">
+                        <span className="text-xs text-gray-500">
+                          #{colorHex}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
 
