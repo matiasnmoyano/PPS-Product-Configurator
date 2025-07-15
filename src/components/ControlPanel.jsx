@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import {
   ChevronLeft,
   ChevronRight,
@@ -8,16 +7,22 @@ import {
   Layers,
   Lightbulb,
 } from "lucide-react";
+import useStore from "../store/useStore";
 
-const ControlPanel = ({
-  materials,
-  floorTexture,
-  onFloorTextureChange,
-  lampSettings,
-  onLampSettingsChange,
-}) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("materials");
+const ControlPanel = () => {
+  const {
+    materialColors,
+    floorTexture,
+    setFloorTexture,
+    lampSettings,
+    updateLampSetting,
+    controlPanel,
+    setControlPanelOpen,
+    setActiveTab,
+    updateMaterialColor,
+  } = useStore();
+
+  const { isOpen, activeTab } = controlPanel;
 
   const materialNames = {
     Drywall: "Pared",
@@ -42,38 +47,22 @@ const ControlPanel = ({
     pine: { name: "Pino", color: "#DEB887" },
   };
 
-  const handleColorChange = (materialId, color) => {
-    if (materials[materialId]) {
-      materials[materialId].color.set(color);
-      materials[materialId].needsUpdate = true;
-    }
-  };
-
   const handleLampToggle = () => {
-    onLampSettingsChange({
-      ...lampSettings,
-      on: !lampSettings.on,
-    });
+    updateLampSetting("on", !lampSettings.on);
   };
 
   const handleLampIntensityChange = (intensity) => {
-    onLampSettingsChange({
-      ...lampSettings,
-      intensity: Number.parseFloat(intensity),
-    });
+    updateLampSetting("intensity", Number.parseFloat(intensity));
   };
 
   const handleLampColorChange = (color) => {
-    onLampSettingsChange({
-      ...lampSettings,
-      color: color,
-    });
+    updateLampSetting("color", color);
   };
 
   return (
     <>
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => setControlPanelOpen(!isOpen)}
         className={`fixed top-4 z-50 bg-white/90 ml-[20px] backdrop-blur-sm border border-gray-200 rounded-lg p-2 shadow-lg transition-all duration-300 hover:bg-white ${
           isOpen ? "left-80" : "left-4"
         }`}
@@ -141,7 +130,7 @@ const ControlPanel = ({
               {Object.entries(floorTextures).map(([key, texture]) => (
                 <button
                   key={key}
-                  onClick={() => onFloorTextureChange(key)}
+                  onClick={() => setFloorTexture(key)}
                   className={`w-full p-3 rounded-lg border-2 transition-all text-left ${
                     floorTexture === key
                       ? "border-blue-500 bg-blue-50"
@@ -168,8 +157,7 @@ const ControlPanel = ({
                 Colores de Materiales
               </h3>
               {Object.entries(materialNames).map(([materialId, label]) => {
-                const colorHex =
-                  materials[materialId]?.color?.getHexString?.() || "ffffff";
+                const colorHex = materialColors[materialId] || "ffffff";
 
                 return (
                   <div key={materialId} className="space-y-2">
@@ -181,7 +169,7 @@ const ControlPanel = ({
                         type="color"
                         className="w-12 h-8 rounded border border-gray-300 cursor-pointer"
                         onChange={(e) =>
-                          handleColorChange(materialId, e.target.value)
+                          updateMaterialColor(materialId, e.target.value)
                         }
                         value={`#${colorHex}`}
                       />

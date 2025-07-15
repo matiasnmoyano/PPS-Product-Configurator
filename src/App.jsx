@@ -6,26 +6,14 @@ import { OrbitControls, Environment, Center } from "@react-three/drei";
 import Model from "./components/Model";
 import ControlPanel from "./components/ControlPanel";
 import Lighting from "./components/Lighting";
-import { useState } from "react";
+import useStore from "./store/useStore";
 
 function App() {
-  const [materials, setMaterials] = useState({});
-  const [floorTexture, setFloorTexture] = useState("oak");
-  const [lampSettings, setLampSettings] = useState({
-    on: true,
-    intensity: 1,
-    color: "#FFE4B5",
-  });
+  const { floorTexture, lampSettings, setMaterials } = useStore();
 
   return (
     <div className="App">
-      <ControlPanel
-        materials={materials}
-        floorTexture={floorTexture}
-        onFloorTextureChange={setFloorTexture}
-        lampSettings={lampSettings}
-        onLampSettingsChange={setLampSettings}
-      />
+      <ControlPanel />
       <Canvas
         gl={{ antialias: true, preserveDrawingBuffer: true }}
         shadows
