@@ -1,6 +1,7 @@
 import { create } from "zustand";
 
 const useStore = create((set, get) => ({
+  // Estados de materiales
   materials: {},
   materialColors: {},
   setMaterials: (materials) => {
@@ -13,9 +14,11 @@ const useStore = create((set, get) => ({
     set({ materials, materialColors: colors });
   },
 
+  // Estado de textura del piso
   floorTexture: "oak",
   setFloorTexture: (texture) => set({ floorTexture: texture }),
 
+  // Estados de la lámpara
   lampSettings: {
     on: true,
     intensity: 1,
@@ -30,6 +33,41 @@ const useStore = create((set, get) => ({
       },
     })),
 
+  // Estados de la cámara
+  cameraPosition: [3, 3, 6],
+  cameraTarget: [0, 0, 0],
+  setCameraPosition: (position, target = [0, 0, 0]) =>
+    set({ cameraPosition: position, cameraTarget: target }),
+
+  // Posiciones predefinidas de cámara
+  cameraPresets: {
+    perspective: {
+      name: "Perspectiva",
+      position: [3, 3, 6],
+      target: [0, 0, 0],
+      icon: "📐",
+    },
+    front: {
+      name: "Vista Frontal",
+      position: [0, 2, 5],
+      target: [0, 1, 0],
+      icon: "👁️",
+    },
+    side: {
+      name: "Vista Lateral",
+      position: [5, 2, 0],
+      target: [0, 1, 0],
+      icon: "↔️",
+    },
+    top: {
+      name: "Vista Superior",
+      position: [0, 6, 0.1],
+      target: [0, 0, 0],
+      icon: "⬆️",
+    },
+  },
+
+  // Estados del panel de control
   controlPanel: {
     isOpen: false,
     activeTab: "materials",

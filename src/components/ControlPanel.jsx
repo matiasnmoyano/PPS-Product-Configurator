@@ -6,6 +6,7 @@ import {
   Palette,
   Layers,
   Lightbulb,
+  Camera,
 } from "lucide-react";
 import useStore from "../store/useStore";
 
@@ -20,6 +21,8 @@ const ControlPanel = () => {
     setControlPanelOpen,
     setActiveTab,
     updateMaterialColor,
+    cameraPresets,
+    setCameraPosition,
   } = useStore();
 
   const { isOpen, activeTab } = controlPanel;
@@ -59,6 +62,13 @@ const ControlPanel = () => {
     updateLampSetting("color", color);
   };
 
+  const handleCameraPreset = (presetKey) => {
+    const preset = cameraPresets[presetKey];
+    if (preset) {
+      setCameraPosition(preset.position, preset.target);
+    }
+  };
+
   return (
     <>
       <button
@@ -88,36 +98,47 @@ const ControlPanel = () => {
         <div className="flex border-b border-gray-200">
           <button
             onClick={() => setActiveTab("floor")}
-            className={`flex-1 flex items-center justify-center gap-2 py-3 px-2 text-xs font-medium transition-colors ${
+            className={`flex-1 flex items-center justify-center gap-1 py-3 px-1 text-xs font-medium transition-colors ${
               activeTab === "floor"
                 ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
                 : "text-gray-500 hover:text-gray-700"
             }`}
           >
-            <Layers size={14} />
+            <Layers size={12} />
             Pisos
           </button>
           <button
             onClick={() => setActiveTab("materials")}
-            className={`flex-1 flex items-center justify-center gap-2 py-3 px-2 text-xs font-medium transition-colors ${
+            className={`flex-1 flex items-center justify-center gap-1 py-3 px-1 text-xs font-medium transition-colors ${
               activeTab === "materials"
                 ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
                 : "text-gray-500 hover:text-gray-700"
             }`}
           >
-            <Palette size={14} />
-            Materiales
+            <Palette size={12} />
+            Colores
           </button>
           <button
             onClick={() => setActiveTab("lighting")}
-            className={`flex-1 flex items-center justify-center gap-2 py-3 px-2 text-xs font-medium transition-colors ${
+            className={`flex-1 flex items-center justify-center gap-1 py-3 px-1 text-xs font-medium transition-colors ${
               activeTab === "lighting"
                 ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
                 : "text-gray-500 hover:text-gray-700"
             }`}
           >
-            <Lightbulb size={14} />
+            <Lightbulb size={12} />
             Luces
+          </button>
+          <button
+            onClick={() => setActiveTab("camera")}
+            className={`flex-1 flex items-center justify-center gap-1 py-3 px-1 text-xs font-medium transition-colors ${
+              activeTab === "camera"
+                ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
+                : "text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            <Camera size={12} />
+            Vistas
           </button>
         </div>
 
@@ -254,6 +275,46 @@ const ControlPanel = () => {
                     </div>
                   </>
                 )}
+              </div>
+            </div>
+          )}
+
+          {activeTab === "camera" && (
+            <div className="space-y-4">
+              <h3 className="text-sm font-medium text-gray-700 mb-4">
+                Vistas de Cámara
+              </h3>
+              <p className="text-xs text-gray-500 mb-4">
+                Selecciona una vista predefinida para explorar el espacio
+              </p>
+
+              <div className="grid grid-cols-2 gap-3">
+                {Object.entries(cameraPresets).map(([key, preset]) => (
+                  <button
+                    key={key}
+                    onClick={() => handleCameraPreset(key)}
+                    className="p-4 bg-white border-2 border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-all group"
+                  >
+                    <div className="text-center">
+                      <div className="text-2xl mb-2 group-hover:scale-110 transition-transform">
+                        {preset.icon}
+                      </div>
+                      <div className="text-sm font-medium text-gray-700 group-hover:text-blue-600">
+                        {preset.name}
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+
+              <div className="mt-6 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                <div className="flex items-start gap-2">
+                  <div className="text-blue-500 mt-0.5">💡</div>
+                  <div className="text-xs text-blue-700">
+                    <strong>Tip:</strong> Después de seleccionar una vista,
+                    puedes usar el mouse para ajustar manualmente la cámara.
+                  </div>
+                </div>
               </div>
             </div>
           )}
