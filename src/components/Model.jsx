@@ -2,12 +2,14 @@
 
 import { useGLTF } from "@react-three/drei";
 import { useMemo, useEffect, useRef } from "react";
+import useStore from "../store/useStore";
 
-const Model = ({ position, onMaterialsReady, floorTexture }) => {
+const Model = ({ position, onMaterialsReady }) => {
   const { scene } = useGLTF("living.glb");
   const materialsReadyRef = useRef(false);
+  const { floorTexture } = useStore();
 
-  const materials = useMemo(() => {
+  const sceneMaterials = useMemo(() => {
     const mats = {};
     scene.traverse((child) => {
       if (child.isMesh && child.material) {
@@ -23,8 +25,8 @@ const Model = ({ position, onMaterialsReady, floorTexture }) => {
   }, [scene]);
 
   useEffect(() => {
-    if (materials.Floor) {
-      const floorMaterial = materials.Floor;
+    if (sceneMaterials.Floor) {
+      const floorMaterial = sceneMaterials.Floor;
 
       const woodColors = {
         oak: "#D2B48C",
@@ -37,21 +39,17 @@ const Model = ({ position, onMaterialsReady, floorTexture }) => {
 
       floorMaterial.color.set(woodColors[floorTexture]);
     }
-  }, [materials, floorTexture]);
+  }, [sceneMaterials, floorTexture]);
 
   useEffect(() => {
-    if (Object.keys(materials).length > 0) {
-      onMaterialsReady(materials);
-    }
-  }, [materials, onMaterialsReady]);
-  useEffect(() => {
-    if (Object.keys(materials).length > 0 && !materialsReadyRef.current) {
+    if (Object.keys(sceneMaterials).length > 0 && !materialsReadyRef.current) {
       materialsReadyRef.current = true;
       setTimeout(() => {
-        onMaterialsReady(materials);
+        onMaterialsReady(sceneMaterials);
       }, 300);
     }
-  }, [materials, onMaterialsReady]);
+  }, [sceneMaterials, onMaterialsReady]);
+
   return (
     <primitive
       object={scene}
